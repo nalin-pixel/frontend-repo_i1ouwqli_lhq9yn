@@ -1,19 +1,43 @@
 import Spline from '@splinetool/react-spline';
 import { ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Hero3D() {
   const [hasError, setHasError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    // Safety timeout: if the 3D scene doesn't load within 3.5s, show a graceful fallback
+    timeoutRef.current = setTimeout(() => {
+      if (!loaded) setHasError(true);
+    }, 3500);
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [loaded]);
+
+  const handleLoad = () => {
+    setLoaded(true);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
 
   return (
     <section id="home" className="relative min-h-[92vh] pt-20 flex items-center bg-[#0C1A2B] overflow-hidden">
-      {/* Background layer: Spline with guaranteed full sizing; graceful fallback gradient if it fails */}
+      {/* Background layer: Spline with guaranteed full sizing; graceful fallback gradient if it fails or times out */}
       <div className="absolute inset-0">
         {!hasError ? (
           <Spline
             scene="https://prod.spline.design/cEecEwR6Ehj4iT8T/scene.splinecode"
             style={{ width: '100%', height: '100%' }}
-            onError={() => setHasError(true)}
+            onLoad={handleLoad}
+            // onError is supported in recent versions; combined with timeout for robustness
+            onError={handleError}
           />
         ) : (
           <div className="w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1E3A5F] via-[#0C1A2B] to-black" />
