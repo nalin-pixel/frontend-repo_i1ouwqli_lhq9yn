@@ -1,14 +1,41 @@
-import Spline from '@splinetool/react-spline';
+import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 export default function Hero3D() {
+  const [SplineComp, setSplineComp] = useState(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    import('@splinetool/react-spline')
+      .then((mod) => {
+        if (mounted) setSplineComp(() => mod.default);
+      })
+      .catch(() => {
+        if (mounted) setFailed(true);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const Background = () => (
+    <div className="absolute inset-0">
+      {SplineComp && !failed ? (
+        <SplineComp
+          scene="https://prod.spline.design/cEecEwR6Ehj4iT8T/scene.splinecode"
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <div className="w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1E3A5F] via-[#0C1A2B] to-black" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0C1A2B]/60 via-[#0C1A2B]/70 to-[#0C1A2B] pointer-events-none" />
+    </div>
+  );
+
   return (
     <section id="home" className="relative min-h-[92vh] pt-20 flex items-center bg-[#0C1A2B] overflow-hidden">
-      <div className="absolute inset-0">
-        <Spline scene="https://prod.spline.design/cEecEwR6Ehj4iT8T/scene.splinecode" style={{ width: '100%', height: '100%' }} />
-      </div>
-
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0C1A2B]/60 via-[#0C1A2B]/70 to-[#0C1A2B] pointer-events-none" />
+      <Background />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="max-w-3xl">
