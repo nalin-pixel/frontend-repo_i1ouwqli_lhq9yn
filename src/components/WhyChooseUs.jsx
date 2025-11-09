@@ -1,4 +1,4 @@
-import { ShieldCheck, Factory, Leaf, Award } from 'lucide-react';
+import { ShieldCheck, Building2, Leaf, Award } from 'lucide-react';
 
 const features = [
   {
@@ -7,7 +7,7 @@ const features = [
     desc: 'Manufactured under strict QA with full traceability and compliance.'
   },
   {
-    icon: Factory,
+    icon: Building2,
     title: 'Modern Production',
     desc: 'High-capacity moulding, CNC cutting, and rapid prototyping.'
   },
